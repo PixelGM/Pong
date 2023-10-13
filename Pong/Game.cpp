@@ -74,9 +74,37 @@ int Game::loadText(const std::string& filename)
 	return number;
 }
 
+	void Game::setBallTexture(const std::string& filename)
+	{
+		SDL_Surface* surface = IMG_Load(filename.c_str());
+		if (!surface)
+		{
+			SDL_Log("Failed to load texture: %s", IMG_GetError());
+			return;
+		}
+		mBallTexture = SDL_CreateTextureFromSurface(mRenderer, surface);
+		SDL_FreeSurface(surface);
+	}
+
+	void Game::setPaddleTexture(const std::string& filename)
+	{
+		SDL_Surface* surface = IMG_Load(filename.c_str());
+		if (!surface)
+		{
+			SDL_Log("Failed to load texture: %s", IMG_GetError());
+			return;
+		}
+		mPaddleTexture = SDL_CreateTextureFromSurface(mRenderer, surface);
+		SDL_FreeSurface(surface);
+	}
+
+
 bool Game::Initialize()
 {
 	highestScore = loadText(FILENAME);
+
+	setBallTexture("face.png");
+	//setPaddleTexture("path/to/paddle.jpg");
 
 	// Initialize SDL
 	int sdlResult = SDL_Init(SDL_INIT_EVERYTHING);
@@ -85,6 +113,14 @@ bool Game::Initialize()
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
 		return false;
 	}
+
+	// Initialize Image JPG
+	if (IMG_Init(IMG_INIT_JPG) == 0)
+	{
+		SDL_Log("Unable to initialize SDL_image: %s", IMG_GetError());
+		return false;
+	}
+
 
 	// Initialize SDL_mixer
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)

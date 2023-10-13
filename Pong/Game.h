@@ -2,6 +2,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_mixer.h"
 #include "SDL/SDL_ttf.h"
+#include "SDL/SDL_image.h"
 
 #include <string>
 #include <fstream>
@@ -23,6 +24,9 @@ public:
 	void RenderText(int, int, int);
 	void saveText(int number, const std::string& filename);
 	int loadText(const std::string& filename);
+	void setBallTexture(const std::string& filename);
+	void setPaddleTexture(const std::string& filename);
+
 private:
 	void ProcessInput();
 	void UpdateGame();
@@ -30,6 +34,8 @@ private:
 	int score = 0;
 	int highestScore = 0;
 	TTF_Font* mFont;
+	SDL_Texture* mBallTexture = nullptr;
+	SDL_Texture* mPaddleTexture = nullptr;
 
 	SDL_Window* mWindow;
 	SDL_Renderer* mRenderer;
