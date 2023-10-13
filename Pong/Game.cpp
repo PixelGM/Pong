@@ -9,8 +9,6 @@ int changeColorG = 255;
 int changeColorB = 0;
 
 const std::string FILENAME = "file.txt";
-int score = 0;
-int highestScore = 0;
 char scoreChar;
 
 Mix_Chunk* collisionSound = nullptr;
@@ -46,34 +44,34 @@ void Game::RenderText(int number, int x, int y)
 	SDL_DestroyTexture(texture);
 }
 
-void saveText(int number, const std::string& filename)
+void Game::saveText(int number, const std::string& filename)
 {
-    std::ofstream outFile(filename);
-    if (outFile.is_open())
-    {
-        outFile << number;
-        outFile.close();
-    }
-    else
-    {
-        std::cerr << "Unable to open file for writing: " << filename << std::endl;
-    }
+	std::ofstream outFile(filename);
+	if (outFile.is_open())
+	{
+		outFile << number;
+		outFile.close();
+	}
+	else
+	{
+		std::cerr << "Unable to open file for writing: " << filename << std::endl;
+	}
 }
 
-int loadText(const std::string& filename)
+int Game::loadText(const std::string& filename)
 {
-    int number = 0;
-    std::ifstream inFile(filename);
-    if (inFile.is_open())
-    {
-        inFile >> number;
-        inFile.close();
-    }
-    else
-    {
-        std::cerr << "Unable to open file for reading: " << filename << std::endl;
-    }
-    return number;
+	int number = 0;
+	std::ifstream inFile(filename);
+	if (inFile.is_open())
+	{
+		inFile >> number;
+		inFile.close();
+	}
+	else
+	{
+		std::cerr << "Unable to open file for reading: " << filename << std::endl;
+	}
+	return number;
 }
 
 bool Game::Initialize()
@@ -191,6 +189,7 @@ void Game::ProcessInput()
 				mIsRunning = false;
 				TTF_CloseFont(mFont);
 				TTF_Quit();
+				saveText(highestScore, FILENAME);
 				break;
 			case SDL_KEYDOWN:
 				if (event.key.keysym.sym == SDLK_z)
@@ -297,14 +296,16 @@ void Game::UpdateGame()
 			changeColorG = 255;
 			changeColorR = 0;
 		}
+		// Increase Score
+		score++;
 
 		if (highestScore <= score)
 		{
-			higherScore = score;
+			highestScore = score;
 		}
 
-		// Increase Score
-		score++;
+		
+		
 	}
 	// Did the ball go off the screen? (if so, end game)
 	else if (mBallPos.x <= 0.0f)

@@ -1,6 +1,17 @@
 ﻿  Game.cpp
   Main.cpp
   Generating Code...
-Game.obj : error LNK2019: unresolved external symbol "public: void __thiscall Game::saveText(int,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?saveText@Game@@QAEXHABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) referenced in function "private: void __thiscall Game::UpdateGame(void)" (?UpdateGame@Game@@AAEXXZ)
-Game.obj : error LNK2019: unresolved external symbol "public: int __thiscall Game::loadText(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?loadText@Game@@QAEHABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) referenced in function "public: bool __thiscall Game::Initialize(void)" (?Initialize@Game@@QAE_NXZ)
-C:\Users\300368944\Desktop\Pong\Pong\Debug\Game.exe : fatal error LNK1120: 2 unresolved externals
+  Game.vcxproj -> C:\Users\300368944\Desktop\Pong\Pong\Debug\Game.exe
+  C:\Users\300368944\Desktop\Pong\Pong\\..\external\SDL\lib\win\x86\libfreetype-6.dll
+  C:\Users\300368944\Desktop\Pong\Pong\\..\external\SDL\lib\win\x86\libogg-0.dll
+  C:\Users\300368944\Desktop\Pong\Pong\\..\external\SDL\lib\win\x86\libpng16-16.dll
+  C:\Users\300368944\Desktop\Pong\Pong\\..\external\SDL\lib\win\x86\libvorbis-0.dll
+  C:\Users\300368944\Desktop\Pong\Pong\\..\external\SDL\lib\win\x86\libvorbisfile-3.dll
+  C:\Users\300368944\Desktop\Pong\Pong\\..\external\SDL\lib\win\x86\SDL2.dll
+  C:\Users\300368944\Desktop\Pong\Pong\\..\external\SDL\lib\win\x86\SDL2_image.dll
+  C:\Users\300368944\Desktop\Pong\Pong\\..\external\SDL\lib\win\x86\SDL2_mixer.dll
+  C:\Users\300368944\Desktop\Pong\Pong\\..\external\SDL\lib\win\x86\SDL2_ttf.dll
+  C:\Users\300368944\Desktop\Pong\Pong\\..\external\SDL\lib\win\x86\zlib1.dll
+  10 File(s) copied
+  C:\Users\300368944\Desktop\Pong\Pong\\..\external\GLEW\lib\win\x86\glew32.dll
+  1 File(s) copied

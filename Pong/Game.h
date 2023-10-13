@@ -27,8 +27,8 @@ private:
 	void ProcessInput();
 	void UpdateGame();
 	void GenerateOutput();
-	int score;
-	int higherScore;
+	int score = 0;
+	int highestScore = 0;
 	TTF_Font* mFont;
 
 	SDL_Window* mWindow;
