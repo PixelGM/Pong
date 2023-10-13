@@ -1,4 +1,4 @@
-
+#define _CRT_SECURE_NO_WARNINGS
 #include "Game.h"
 
 const int thickness = 15;
@@ -8,6 +8,13 @@ int changeColorR = 0;
 int changeColorG = 255;
 int changeColorB = 0;
 
+const std::string FILENAME = "file.txt";
+int score = 0;
+int highestScore = 0;
+char scoreChar;
+
+Mix_Chunk* collisionSound = nullptr;
+Mix_Music* backgroundMusic = nullptr;
 
 Game::Game()
 {	
@@ -18,23 +25,61 @@ Game::Game()
 	mPaddleDir=0;
 }
 
-void Game::RenderText(const char* text, int x, int y)
+void Game::RenderText(int number, int x, int y)
 {
+	char buffer[50];
+	sprintf(buffer, "%d", number);  // Convert int to char array
+
 	SDL_Color color = { 255, 255, 255 };  // White
-	SDL_Surface* surface = TTF_RenderText_Solid(mFont, text, color);
+	SDL_Surface* surface = TTF_RenderText_Solid(mFont, buffer, color);
 
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
 	SDL_FreeSurface(surface);
 
-	SDL_Rect dstRect = { x, y, surface->w, surface->h };
-	SDL_RenderCopy(mRenderer, texture, nullptr, &dstRect);
+	int texW = 0;
+	int texH = 0;
+	SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+
+	SDL_Rect dstRect = { x, y, texW, texH };
+	SDL_RenderCopy(mRenderer, texture, NULL, &dstRect);
 
 	SDL_DestroyTexture(texture);
 }
 
+void saveText(int number, const std::string& filename)
+{
+    std::ofstream outFile(filename);
+    if (outFile.is_open())
+    {
+        outFile << number;
+        outFile.close();
+    }
+    else
+    {
+        std::cerr << "Unable to open file for writing: " << filename << std::endl;
+    }
+}
+
+int loadText(const std::string& filename)
+{
+    int number = 0;
+    std::ifstream inFile(filename);
+    if (inFile.is_open())
+    {
+        inFile >> number;
+        inFile.close();
+    }
+    else
+    {
+        std::cerr << "Unable to open file for reading: " << filename << std::endl;
+    }
+    return number;
+}
 
 bool Game::Initialize()
 {
+	highestScore = loadText(FILENAME);
+
 	// Initialize SDL
 	int sdlResult = SDL_Init(SDL_INIT_EVERYTHING);
 	if (sdlResult != 0)
@@ -43,6 +88,33 @@ bool Game::Initialize()
 		return false;
 	}
 
+	// Initialize SDL_mixer
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		SDL_Log("SDL_mixer could not initialize! SDL_mixer Error: %s", Mix_GetError());
+		return false;
+	}
+
+	// Load sound effects
+	collisionSound = Mix_LoadWAV("collision.wav");
+	if (collisionSound == nullptr)
+	{
+		SDL_Log("Failed to load collision sound effect! SDL_mixer Error: %s", Mix_GetError());
+		return false;
+	}
+
+	// Load music
+	backgroundMusic = Mix_LoadMUS("soundtrack.wav");
+	if (backgroundMusic == nullptr)
+	{
+		SDL_Log("Failed to load background music! SDL_mixer Error: %s", Mix_GetError());
+		return false;
+	}
+
+	// Play the music
+	Mix_PlayMusic(backgroundMusic, -1);
+
+	// TTF Error Handling
 	if (TTF_Init() == -1)
 	{
 		SDL_Log("Failed to initialize TTF: %s", TTF_GetError());
@@ -120,6 +192,22 @@ void Game::ProcessInput()
 				TTF_CloseFont(mFont);
 				TTF_Quit();
 				break;
+			case SDL_KEYDOWN:
+				if (event.key.keysym.sym == SDLK_z)
+				{
+					if (Mix_PausedMusic() == 1)
+					{
+						Mix_ResumeMusic();
+					}
+					else
+					{
+						Mix_PauseMusic();
+					}
+				}
+				break;
+
+				
+
 		}
 	}
 	
@@ -196,7 +284,8 @@ void Game::UpdateGame()
 		// If ball collide paddle HEREHERE
 		mBallVel.x *= -1.0f;
 		
-
+		// Play collision sound
+		Mix_PlayChannel(-1, collisionSound, 0);
 
 		if (changeColorG == 255)
 		{
@@ -208,11 +297,19 @@ void Game::UpdateGame()
 			changeColorG = 255;
 			changeColorR = 0;
 		}
-		
+
+		if (highestScore <= score)
+		{
+			higherScore = score;
+		}
+
+		// Increase Score
+		score++;
 	}
 	// Did the ball go off the screen? (if so, end game)
 	else if (mBallPos.x <= 0.0f)
 	{
+		saveText(highestScore, FILENAME);
 		mIsRunning = false;
 	}
 	// Did the ball collide with the right wall?
@@ -291,8 +388,8 @@ void Game::GenerateOutput()
 	SDL_RenderFillRect(mRenderer, &ball);
 	
 	// Draw Text
-	SDL_SetRenderDrawColor(mRenderer, 0, 0, 0, 255);
-	RenderText("Your text here", 500, 500);
+	RenderText(score, 500, 500);
+	RenderText(highestScore, 500, 600);
 	
 
 	// Swap front buffer and back buffer
@@ -303,5 +400,11 @@ void Game::Shutdown()
 {
 	SDL_DestroyRenderer(mRenderer);
 	SDL_DestroyWindow(mWindow);
+	// Free sound effects and music
+	Mix_FreeChunk(collisionSound);
+	Mix_FreeMusic(backgroundMusic);
+
+	// Quit SDL_mixer
+	Mix_Quit();
 	SDL_Quit();
 }
