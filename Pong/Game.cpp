@@ -23,6 +23,33 @@ Game::Game()
 	mPaddleDir=0;
 }
 
+void Game::setBallTexture(const std::string& jpg) {
+	SDL_Surface* surface = IMG_Load(jpg.c_str());
+	if (!surface) {
+		SDL_Log("Failed to load ball texture image: %s", IMG_GetError());
+		return;
+	}
+	mBallTexture = SDL_CreateTextureFromSurface(mRenderer, surface);
+	SDL_FreeSurface(surface);
+	if (!mBallTexture) {
+		SDL_Log("Failed to create ball texture: %s", SDL_GetError());
+	}
+}
+
+void Game::setPaddleTexture(const std::string& jpg) {
+	SDL_Surface* surface = IMG_Load(jpg.c_str());
+	if (!surface) {
+		SDL_Log("Failed to load paddle texture image: %s", IMG_GetError());
+		return;
+	}
+	mPaddleTexture = SDL_CreateTextureFromSurface(mRenderer, surface);
+	SDL_FreeSurface(surface);
+	if (!mPaddleTexture) {
+		SDL_Log("Failed to create paddle texture: %s", SDL_GetError());
+	}
+}
+
+
 void Game::RenderText(int number, int x, int y)
 {
 	char buffer[50];
@@ -74,36 +101,11 @@ int Game::loadText(const std::string& filename)
 	return number;
 }
 
-	void Game::setBallTexture(const std::string& filename)
-	{
-		SDL_Surface* surface = IMG_Load(filename.c_str());
-		if (!surface)
-		{
-			SDL_Log("Failed to load texture: %s", IMG_GetError());
-			return;
-		}
-		mBallTexture = SDL_CreateTextureFromSurface(mRenderer, surface);
-		SDL_FreeSurface(surface);
-	}
-
-	void Game::setPaddleTexture(const std::string& filename)
-	{
-		SDL_Surface* surface = IMG_Load(filename.c_str());
-		if (!surface)
-		{
-			SDL_Log("Failed to load texture: %s", IMG_GetError());
-			return;
-		}
-		mPaddleTexture = SDL_CreateTextureFromSurface(mRenderer, surface);
-		SDL_FreeSurface(surface);
-	}
-
-
 bool Game::Initialize()
 {
 	highestScore = loadText(FILENAME);
-
-	setBallTexture("face.png");
+	
+	
 	//setPaddleTexture("path/to/paddle.jpg");
 
 	// Initialize SDL
@@ -406,22 +408,34 @@ void Game::GenerateOutput()
 	SDL_RenderFillRect(mRenderer, &wall);
 
 	
-	// Draw paddle
 	SDL_Rect paddle{
 		static_cast<int>(mPaddlePos.x),
-		static_cast<int>(mPaddlePos.y - paddleH/2),
+		static_cast<int>(mPaddlePos.y - paddleH / 2),
 		thickness,
 		static_cast<int>(paddleH)
 	};
+	if (mPaddleTexture) {
+		SDL_RenderCopy(mRenderer, mPaddleTexture, NULL, &paddle);
+	}
+	else {
+		SDL_RenderFillRect(mRenderer, &paddle);
+	}
+
 	SDL_RenderFillRect(mRenderer, &paddle);
 	
 	// Draw ball
-	SDL_Rect ball{	
-		static_cast<int>(mBallPos.x - thickness/2),
-		static_cast<int>(mBallPos.y - thickness/2),
+	SDL_Rect ball{
+		static_cast<int>(mBallPos.x - thickness / 2),
+		static_cast<int>(mBallPos.y - thickness / 2),
 		thickness,
 		thickness
 	};
+	if (mBallTexture) {
+		SDL_RenderCopy(mRenderer, mBallTexture, NULL, &ball);
+	}
+	else {
+		SDL_RenderFillRect(mRenderer, &ball);
+	}
 	SDL_RenderFillRect(mRenderer, &ball);
 	
 	// Draw Text
