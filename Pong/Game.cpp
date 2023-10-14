@@ -23,33 +23,6 @@ Game::Game()
 	mPaddleDir=0;
 }
 
-void Game::setBallTexture(const std::string& jpg) {
-	SDL_Surface* surface = IMG_Load(jpg.c_str());
-	if (!surface) {
-		SDL_Log("Failed to load ball texture image: %s", IMG_GetError());
-		return;
-	}
-	mBallTexture = SDL_CreateTextureFromSurface(mRenderer, surface);
-	SDL_FreeSurface(surface);
-	if (!mBallTexture) {
-		SDL_Log("Failed to create ball texture: %s", SDL_GetError());
-	}
-}
-
-void Game::setPaddleTexture(const std::string& jpg) {
-	SDL_Surface* surface = IMG_Load(jpg.c_str());
-	if (!surface) {
-		SDL_Log("Failed to load paddle texture image: %s", IMG_GetError());
-		return;
-	}
-	mPaddleTexture = SDL_CreateTextureFromSurface(mRenderer, surface);
-	SDL_FreeSurface(surface);
-	if (!mPaddleTexture) {
-		SDL_Log("Failed to create paddle texture: %s", SDL_GetError());
-	}
-}
-
-
 void Game::RenderText(int number, int x, int y)
 {
 	char buffer[50];

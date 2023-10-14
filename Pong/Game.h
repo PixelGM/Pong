@@ -24,8 +24,6 @@ public:
 	void RenderText(int, int, int);
 	void saveText(int number, const std::string& filename);
 	int loadText(const std::string& filename);
-	void setBallTexture(const std::string& jpg);
-	void setPaddleTexture(const std::string& jpg);
 
 private:
 	void ProcessInput();
