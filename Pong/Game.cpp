@@ -167,6 +167,25 @@ bool Game::Initialize()
 	mBallVel.x = -200.0f;
 	mBallVel.y = 235.0f;
 
+	// Load paddle texture
+	paddleSurface = IMG_Load("paddle.png");
+	if (!paddleSurface)
+	{
+		SDL_Log("Failed to load image: %s", IMG_GetError());
+		return false;
+	}
+	paddleTexture = SDL_CreateTextureFromSurface(mRenderer, paddleSurface);
+	SDL_FreeSurface(paddleSurface);  // Free the temporary surface
+	// Load ball texture
+	ballSurface = IMG_Load("ball.png");
+	if (!ballSurface)
+	{
+		SDL_Log("Failed to load image: %s", IMG_GetError());
+		return false;
+	}
+	ballTexture = SDL_CreateTextureFromSurface(mRenderer, ballSurface);
+	SDL_FreeSurface(ballSurface);  // Free the temporary surface
+
 	return true;
 }
 
@@ -373,35 +392,23 @@ void Game::GenerateOutput()
 	SDL_RenderFillRect(mRenderer, &wall);
 
 	
+	// Draw paddle using texture
 	SDL_Rect paddle{
 		static_cast<int>(mPaddlePos.x),
 		static_cast<int>(mPaddlePos.y - paddleH / 2),
 		thickness,
 		static_cast<int>(paddleH)
 	};
-	if (mPaddleTexture) {
-		SDL_RenderCopy(mRenderer, mPaddleTexture, NULL, &paddle);
-	}
-	else {
-		SDL_RenderFillRect(mRenderer, &paddle);
-	}
+	SDL_RenderCopy(mRenderer, paddleTexture, NULL, &paddle);
 
-	SDL_RenderFillRect(mRenderer, &paddle);
-	
-	// Draw ball
+	// Draw ball using texture
 	SDL_Rect ball{
 		static_cast<int>(mBallPos.x - thickness / 2),
 		static_cast<int>(mBallPos.y - thickness / 2),
 		thickness,
 		thickness
 	};
-	if (mBallTexture) {
-		SDL_RenderCopy(mRenderer, mBallTexture, NULL, &ball);
-	}
-	else {
-		SDL_RenderFillRect(mRenderer, &ball);
-	}
-	SDL_RenderFillRect(mRenderer, &ball);
+	SDL_RenderCopy(mRenderer, ballTexture, NULL, &ball);
 	
 	// Draw Text
 	RenderText(score, 500, 500);
@@ -416,9 +423,12 @@ void Game::Shutdown()
 {
 	SDL_DestroyRenderer(mRenderer);
 	SDL_DestroyWindow(mWindow);
-	// Free sound effects and music
+	// Free sound effects and music	
 	Mix_FreeChunk(collisionSound);
 	Mix_FreeMusic(backgroundMusic);
+
+	SDL_DestroyTexture(paddleTexture);
+	SDL_DestroyTexture(ballTexture);
 
 	// Quit SDL_mixer
 	Mix_Quit();

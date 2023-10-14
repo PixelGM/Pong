@@ -34,6 +34,10 @@ private:
 	TTF_Font* mFont;
 	SDL_Texture* mBallTexture = nullptr;
 	SDL_Texture* mPaddleTexture = nullptr;
+	SDL_Surface* paddleSurface;
+	SDL_Texture* paddleTexture;
+	SDL_Surface* ballSurface;
+	SDL_Texture* ballTexture;
 
 	SDL_Window* mWindow;
 	SDL_Renderer* mRenderer;
