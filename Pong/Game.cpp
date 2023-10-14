@@ -89,14 +89,6 @@ bool Game::Initialize()
 		return false;
 	}
 
-	// Initialize Image JPG
-	if (IMG_Init(IMG_INIT_JPG) == 0)
-	{
-		SDL_Log("Unable to initialize SDL_image: %s", IMG_GetError());
-		return false;
-	}
-
-
 	// Initialize SDL_mixer
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 	{
